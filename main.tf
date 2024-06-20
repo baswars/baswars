@@ -39,3 +39,14 @@ resource "azurerm_subnet" "bastion-host" {
   address_prefixes = ["10.0.4.0/26"]
   
 }
+resource "azurerm_network_interface" "nic" {
+  name                = "nic-vm1"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  ip_configuration {
+    name                          = "internal"
+    subnet_id                     = azurerm_subnet.subnet1.id
+    private_ip_address_allocation = "Dynamic"
+  }
+}
