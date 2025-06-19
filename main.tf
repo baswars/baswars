@@ -50,3 +50,9 @@ resource "azurerm_network_interface" "nic" {
     private_ip_address_allocation = "Dynamic"
   }
 }
+
+resource "azurerm_resource_group" "rg1" {
+  name     = "rg-vm11"
+  location = "East US"
+
+}
