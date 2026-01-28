@@ -1,0 +1,41 @@
+name: infra-pipeline
+
+trigger: 
+  branches:
+    include:
+      - master
+    exclude:
+      - feature*
+  batch: true 
+
+pool: default
+
+jobs:
+  - job: 
+    displayName: TerraformInitPlan
+    steps:
+    - task: TerraformInstaller@1
+      displayName: TerraformInstall
+      inputs:
+        terraformVersion: 'latest'
+    - task: TerraformTask@5
+      displayName: TerraformInit
+      inputs:
+        provider: 'azurerm'
+        command: 'init'
+        backendServiceArm: 'infra-ashoksc'
+        backendAzureRmResourceGroupName: 'rg-dev'
+        backendAzureRmStorageAccountName: 'devstoragedevaccount'
+        backendAzureRmContainerName: 'terraformcotainer'
+        backendAzureRmKey: 'terraformInfra.tfstate'
+    - task: TerraformTask@5
+      displayName: TerraformValidate
+      inputs:
+        provider: 'azurerm'
+        command: 'validate'
+    - task: TerraformTask@5
+      displayName: TerraformPlan
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+        environmentServiceNameAzureRM: 'infra-ashoksc'
