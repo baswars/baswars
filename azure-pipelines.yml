@@ -39,3 +39,11 @@ jobs:
         provider: 'azurerm'
         command: 'plan'
         environmentServiceNameAzureRM: 'infra-ashoksc'
+  - job: 
+    displayName: ManualValidation
+    pool: server
+    steps:
+    - task: ManualValidation@1
+      inputs:
+        notifyUsers: 'sachin.baswar@vodafone.com'
+        instructions: 'please check & review'
