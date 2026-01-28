@@ -11,7 +11,7 @@ trigger:
 pool: default
 
 jobs:
-  - job: 
+  - job: job1
     displayName: TerraformInitPlan
     steps:
     - task: TerraformInstaller@1
@@ -40,7 +40,7 @@ jobs:
         command: 'plan'
         environmentServiceNameAzureRM: 'infra-ashoksc'
   - job: 
-    dependsOn: TerraformInitPlan
+    dependsOn: job1
     displayName: ManualValidation
     pool: server
     steps:
