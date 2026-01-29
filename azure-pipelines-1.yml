@@ -48,12 +48,9 @@ jobs:
   pool: server
   timeoutInMinutes: 2
   steps:
-  - task: ManualIntervention@8
-    inputs:
-      instructions: 'please review & approve'
-      emailRecipients: 'sachin.baswar@outlook.com'
+ 
   - task: ManualValidation@1
     inputs:
       notifyUsers: 'sachin.baswar@outlook.com'
-      approvers: 'sachin baswar'
+      approvers: 'sachin.baswar@outlook.com'
       instructions: 'please review & approve'
