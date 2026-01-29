@@ -44,14 +44,18 @@ jobs:
       provider: 'azurerm'
       command: 'plan'
       environmentServiceNameAzureRM: 'infra-ashoksc'
-
+  - task: tfsec@1
+    displayName: CodeScan
+    inputs:
+      version: 'v1.26.0'
+      dir: '$(System.DefaultWorkingDirectory)'
+  
 - job: Manuablevalidate 
   displayName: Manuablevalidate 
   dependsOn: terraformInitPlan
   pool: server
   timeoutInMinutes: 2
   steps:
- 
   - task: ManualValidation@1
     inputs:
       notifyUsers: 'sachin.baswar@outlook.com'
