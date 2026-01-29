@@ -41,4 +41,14 @@ jobs:
       provider: 'azurerm'
       command: 'plan'
       environmentServiceNameAzureRM: 'infra-ashoksc'
-  
+
+- job: Manuablevalidate 
+  displayName: Manuablevalidate 
+  pool: server
+  timeoutInMinutes: 2
+  steps:
+  - task: ManualValidation@1
+    inputs:
+      notifyUsers: 'sachin.baswar@outlook.com'
+      approvers: 'sachin baswar'
+      instructions: 'please review & approve'
