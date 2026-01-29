@@ -10,6 +10,9 @@ trigger:
 
 pool: default
 
+variables:
+  SC_name : 'infra-ashoksc'
+
 jobs:
   - job: job1
     displayName: TerraformInitPlan
@@ -23,7 +26,7 @@ jobs:
       inputs:
         provider: 'azurerm'
         command: 'init'
-        backendServiceArm: 'infra-ashoksc'
+        backendServiceArm: $(SC_name)
         backendAzureRmResourceGroupName: 'rg-dev'
         backendAzureRmStorageAccountName: 'devstoragedevaccount'
         backendAzureRmContainerName: 'terraformcotainer'
@@ -38,11 +41,18 @@ jobs:
       inputs:
         provider: 'azurerm'
         command: 'plan'
-        environmentServiceNameAzureRM: 'infra-ashoksc'
+        environmentServiceNameAzureRM: $(SC_name)
+    - task: tfsec@1
+      displayName: CodescanningTool
+      inputs:
+        version: 'v1.26.0'
+        debug: true
+        dir: '$(System.DefaultWorkingDirectory)'
   - job: 
     dependsOn: job1
     displayName: ManualValidation
     pool: server
+    timeoutInMinutes: 2
     steps:
     - task: ManualValidation@1
       inputs:
