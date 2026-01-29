@@ -66,25 +66,24 @@ jobs:
   - task: PowerShell@2
     displayName: Install & Run TFLint
     inputs:
-      pwsh: true
-      targetType: inline
+      targetType: 'inline'
       script: |
         $ErrorActionPreference = "Stop"
-
+        
         $url = "https://github.com/terraform-linters/tflint/releases/download/v0.54.0/tflint_windows_amd64.zip"
         $zipPath = "$(System.DefaultWorkingDirectory)\tflint.zip"
         $extractPath = "$(System.DefaultWorkingDirectory)\tflint"
         $tflintExe = "$extractPath\tflint.exe"
-
+        
         Write-Host "Downloading TFLint..."
         Invoke-WebRequest -Uri $url -OutFile $zipPath
-
+        
         Write-Host "Extracting TFLint..."
         Expand-Archive -Path $zipPath -DestinationPath $extractPath -Force
-
+        
         Write-Host "Verifying TFLint..."
         & $tflintExe --version
-
+        
         Write-Host "Running TFLint..."
         & $tflintExe --init
         & $tflintExe
