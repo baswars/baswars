@@ -44,6 +44,7 @@ jobs:
 
 - job: Manuablevalidate 
   displayName: Manuablevalidate 
+  dependsOn: terraformInitPlan
   pool: server
   timeoutInMinutes: 2
   steps:
