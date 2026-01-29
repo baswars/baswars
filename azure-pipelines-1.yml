@@ -1,63 +1,105 @@
 name: b15pipeline
 
-trigger: 
- branches:
-  include:
-    - master
-    - main
-  exclude:
-    - feature*
- batch: true
+trigger:
+  branches:
+    include:
+      - main
+      - master
+    exclude:
+      - feature*
+  batch: true
 
-pool: 
- name: default
- demands: 
- - agent.name -equals vm-agent
+pool:
+  name: default
+  demands:
+    - Agent.Name -equals vm-agent
 
-jobs: 
-- job: terraformInitPlan
-  displayName: terraformInitPlan
-  steps: 
+jobs:
+# =========================
+# Terraform Init / Plan Job
+# =========================
+- job: TerraformInitPlan
+  displayName: Terraform Init & Plan
+  steps:
+
   - task: TerraformInstaller@1
-    displayName: TerraformInstall
+    displayName: Install Terraform
     inputs:
       terraformVersion: 'latest'
 
   - task: TerraformTask@5
-    displayName: TerraformInit
+    displayName: Terraform Init
     inputs:
-      provider: 'azurerm'
-      command: 'init'
-      backendServiceArm: 'infra-ashoksc'
-      backendAzureRmResourceGroupName: 'rg-dev'
-      backendAzureRmStorageAccountName: 'devstoragedevaccount'
-      backendAzureRmContainerName: 'terraformcotainer'
-      backendAzureRmKey: 'terraformb15.tfstate'
+      provider: azurerm
+      command: init
+      backendServiceArm: infra-ashoksc
+      backendAzureRmResourceGroupName: rg-dev
+      backendAzureRmStorageAccountName: devstoragedevaccount
+      backendAzureRmContainerName: terraformcotainer
+      backendAzureRmKey: terraformb15.tfstate
+
   - task: TerraformTask@5
-    displayName: TerrafomrValidate
+    displayName: Terraform Validate
     inputs:
-      provider: 'azurerm'
-      command: 'validate'
+      provider: azurerm
+      command: validate
+
   - task: TerraformTask@5
-    displayName: TerraformPlan
+    displayName: Terraform Plan
     inputs:
-      provider: 'azurerm'
-      command: 'plan'
-      environmentServiceNameAzureRM: 'infra-ashoksc'
+      provider: azurerm
+      command: plan
+      environmentServiceNameAzureRM: infra-ashoksc
+
+  # =========================
+  # tfsec Scan
+  # =========================
   - task: tfsec@1
-    displayName: CodeScan
+    displayName: tfsec Terraform Scan
     inputs:
-      version: 'v1.26.0'
-      dir: '$(System.DefaultWorkingDirectory)'
-  
-- job: Manuablevalidate 
-  displayName: Manuablevalidate 
-  dependsOn: terraformInitPlan
+      version: v1.26.0
+      dir: $(System.DefaultWorkingDirectory)
+
+  # =========================
+  # TFLint Scan (SAFE)
+  # =========================
+  - task: PowerShell@2
+    displayName: Install & Run TFLint
+    inputs:
+      pwsh: true
+      targetType: inline
+      script: |
+        $ErrorActionPreference = "Stop"
+
+        $url = "https://github.com/terraform-linters/tflint/releases/download/v0.54.0/tflint_windows_amd64.zip"
+        $zipPath = "$(System.DefaultWorkingDirectory)\tflint.zip"
+        $extractPath = "$(System.DefaultWorkingDirectory)\tflint"
+        $tflintExe = "$extractPath\tflint.exe"
+
+        Write-Host "Downloading TFLint..."
+        Invoke-WebRequest -Uri $url -OutFile $zipPath
+
+        Write-Host "Extracting TFLint..."
+        Expand-Archive -Path $zipPath -DestinationPath $extractPath -Force
+
+        Write-Host "Verifying TFLint..."
+        & $tflintExe --version
+
+        Write-Host "Running TFLint..."
+        & $tflintExe --init
+        & $tflintExe
+
+# =========================
+# Manual Approval Job
+# =========================
+- job: ManualValidate
+  displayName: Manual Validation
+  dependsOn: TerraformInitPlan
   pool: server
-  timeoutInMinutes: 2
+  timeoutInMinutes: 10
   steps:
   - task: ManualValidation@1
     inputs:
-      notifyUsers: 'sachin.baswar@outlook.com'
-      approvers: 'sachin.baswar@outlook.com'
-      instructions: 'please review & approve'
+      notifyUsers: sachin.baswar@outlook.com
+      approvers: sachin.baswar@outlook.com
+      instructions: Please review Terraform plan and approve
