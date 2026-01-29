@@ -9,7 +9,9 @@ trigger:
     - feature*
  batch: true
 
-pool: default
+pool: 
+ name: default
+ demands: vm-agent
 
 jobs: 
 - job: terraformInitPlan
