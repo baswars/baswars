@@ -18,7 +18,8 @@ jobs:
   - task: TerraformInstaller@1
     displayName: TerraformInstall
     inputs:
-    terraformVersion: 'latest'
+      terraformVersion: 'latest'
+
   - task: TerraformTask@5
     displayName: TerraformInit
     inputs:
