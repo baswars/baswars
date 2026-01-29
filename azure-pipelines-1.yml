@@ -11,7 +11,8 @@ trigger:
 
 pool: 
  name: default
- demands: vm-agent
+ demands: 
+ - agent.name -equals vm-agent
 
 jobs: 
 - job: terraformInitPlan
