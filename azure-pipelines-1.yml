@@ -104,23 +104,23 @@ jobs:
         $ErrorActionPreference = "Stop"
         
         $url = "https://github.com/terraform-linters/tflint/releases/download/v0.59.1/tflint_windows_amd64.zip"
-        $archive = "$(System.DefaultWorkingDirectory)\tflint.tar.gz"
-        $extractDir = "$(System.DefaultWorkingDirectory)\trufflehog"
+        $zipPath = "$(System.DefaultWorkingDirectory)\tflint.zip"
+        $extractPath = "$(System.DefaultWorkingDirectory)\tflint"
+        $tflintExe = "$extractPath\tflint.exe"
         
-        Write-Host "Downloading TruffleHog..."
-        Invoke-WebRequest -Uri $url -OutFile $archive
+        Write-Host "Downloading Tflint..."
+        Invoke-WebRequest -Uri $url -OutFile $zipPath
         
-        Write-Host "Extracting tar.gz..."
-        New-Item -ItemType Directory -Force -Path $extractDir | Out-Null
-        tar -xzf $archive -C $extractDir
+        Write-Host "Extracting TFlint..."
+        Expand-Archive -Path $zipPath -DestinationPath $extractPath -Force
+        
         
         Write-Host "Verify TruffleHog..."
-        & "$extractDir\trufflehog.exe" --version
+        & $tflintExe --version
         
         Write-Host "Running TruffleHog..."
-        & "$extractDir\trufflehog.exe" filesystem "$(System.DefaultWorkingDirectory)" `
-         --only-verified `
-         --json > "$(System.DefaultWorkingDirectory)\trufflehog.json"
+        & $tflintExe --init 
+        & $tflintExe
 
 # =========================
 # Manual Approval Job
