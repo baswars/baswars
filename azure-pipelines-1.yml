@@ -121,7 +121,14 @@ jobs:
         
         Write-Host "Running tflint..."
         & $tflintExe --init 
-        & $tflintExe
+        Write-Host "Initialize tflint..."
+        & $tflintExe --init
+
+        Write-Host "Running tflint with JSON output..."
+        & $tflintExe `
+        --format json `
+        --recursive `
+        > "$(System.DefaultWorkingDirectory)\tflint.json"
   - task: PublishBuildArtifacts@1
     displayName: Publish Tflint Report
     condition: always()
