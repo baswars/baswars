@@ -98,6 +98,7 @@ jobs:
  # TFLint Install & Scan
 # =========================
   - task: PowerShell@2
+    displayName: TflintInstall
     inputs:
       targetType: 'inline'
       script: |
@@ -122,7 +123,19 @@ jobs:
         # Step 4: Verify the TFLint installation
         Write-Host "Verifying TFLint installation..."
         tflint --version
-
+  - task: CmdLine@2
+    inputs:
+        script: 
+         echo "Runnig tflint...."
+         $(System.DefaultWorkingDirectory)\tflint\tflint.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=junit > junit.xml
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+  - task: PublishTestResults@2
+    condition: always()
+    inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '$(System.DefaultWorkingDirectory)/junit.xml'
+        mergeTestResults: true
+        testRunTitle: 'tflint'
 
   #========================
   # CHeckov
@@ -155,19 +168,7 @@ jobs:
 
         Write-Host "Verify checkov..."
         & $checkovexe --version
-  - task: CmdLine@2
-    inputs:
-        script: 
-         echo "Runnig tflint...."
-         $(System.DefaultWorkingDirectory)\tflint\tflint.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=junit > junit.xml
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
-  - task: PublishTestResults@2
-    condition: always()
-    inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '$(System.DefaultWorkingDirectory)/junit.xml'
-        mergeTestResults: true
-        testRunTitle: 'tflint'
+  
 # =========================
 # Manual Approval Job
 # =========================
