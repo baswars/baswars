@@ -172,15 +172,14 @@ jobs:
     inputs:
         script: 
          echo "Runnig checkov...."
-         $(System.DefaultWorkingDirectory)\checkov\checkov.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=junit > junit.xml
+         $(System.DefaultWorkingDirectory)\checkov\checkov.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=json > json.xml
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
   - task: PublishTestResults@2
-    displayName: Publish TFLint Test Results
+    displayName: Publish checkov Test Results
     condition: always()
     inputs:
-      testResultsFormat: 'JUnit'
-      testResultsFiles: '$(System.DefaultWorkingDirectory)/junit.xml'
+      testResultsFiles: '$(System.DefaultWorkingDirectory)/json.xml'
       mergeTestResults: true
       testRunTitle: 'checkov'
 
