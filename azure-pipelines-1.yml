@@ -88,6 +88,12 @@ jobs:
          & "$extractDir\trufflehog.exe" filesystem "$(System.DefaultWorkingDirectory)" `
           --only-verified `
           --json > "$(System.DefaultWorkingDirectory)\trufflehog.json"
+  - task: PublishBuildArtifacts@1
+    displayName: Publish TruffleHog Report
+    condition: always()
+    inputs:
+       PathtoPublish: '$(System.DefaultWorkingDirectory)\trufflehog.json'
+       ArtifactName: 'TruffleHog-Report'
 
 
 
