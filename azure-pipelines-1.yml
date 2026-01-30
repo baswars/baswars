@@ -167,7 +167,12 @@ jobs:
           $env:Path += ";$extractPath\dist"
          Write-Host "Verify checkov..."
          checkov --version
-  
+  - task: CmdLine@2
+    inputs:
+        script: 
+         echo "Runnig checkov...."
+         $(System.DefaultWorkingDirectory)\checkov\checkov.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=json > checkov.json
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
 # =========================
 # Manual Approval Job
 # =========================
