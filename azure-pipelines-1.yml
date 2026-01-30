@@ -165,8 +165,8 @@ jobs:
         # Step 3: Add checkov directory to the environment PATH variable
           Write-Host "Adding checkov to PATH..."
           $env:Path += ";$extractPath\dist"
-        Write-Host "Verify checkov..."
-        & $checkov.exe --version
+         Write-Host "Verify checkov..."
+         $checkovexe --version
   
 # =========================
 # Manual Approval Job
