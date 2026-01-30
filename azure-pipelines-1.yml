@@ -129,13 +129,13 @@ jobs:
          echo "Runnig tflint...."
          $(System.DefaultWorkingDirectory)\tflint\tflint.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=json > tflint.json
         workingDirectory: '$(System.DefaultWorkingDirectory)'
-  - task: PublishTestResults@2
+  - task: PublishBuildArtifacts@1
+    displayName: Publish TFLint JSON Report
     condition: always()
     inputs:
-        testResultsFormat: 'json'
-        testResultsFiles: '$(System.DefaultWorkingDirectory)/tflint.json'
-        mergeTestResults: true
-        testRunTitle: 'tflint'
+      PathtoPublish: '$(System.DefaultWorkingDirectory)\tflint.json'
+      ArtifactName: 'tflint-report'
+
 
   #========================
   # CHeckov
