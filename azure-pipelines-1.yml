@@ -70,7 +70,7 @@ jobs:
       script: |
         $ErrorActionPreference = "Stop"
 
-        $url = "https://github.com/trufflesecurity/trufflehog/releases/download/v3.74.0/trufflehog_3.74.0_windows_amd64.zip"
+        $url = "https://github.com/trufflesecurity/trufflehog/releases/download/v3.92.5/trufflehog_3.92.5_windows_amd64.tar.gz"
         $zipPath = "$(System.DefaultWorkingDirectory)\trufflehog.zip"
         $extractPath = "$(System.DefaultWorkingDirectory)\trufflehog"
         $exePath = "$extractPath\trufflehog.exe"
