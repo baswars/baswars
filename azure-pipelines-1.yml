@@ -12,7 +12,7 @@ trigger:
 pool:
   name: default
   demands:
-    - Agent.Name -equals vm-agent
+    - Agent.Name -equals Infra-agent
 
 jobs:
 # =========================
