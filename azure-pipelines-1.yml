@@ -87,19 +87,13 @@ jobs:
          Write-Host "Running TruffleHog..."
          & "$extractDir\trufflehog.exe" filesystem "$(System.DefaultWorkingDirectory)" `
           --only-verified `
-          --sarif > "$(System.DefaultWorkingDirectory)\trufflehog.sarif"
-  # - task: PublishBuildArtifacts@1
-  #   displayName: Publish TruffleHog Report
-  #   condition: always()
-  #   inputs:
-  #      PathtoPublish: '$(System.DefaultWorkingDirectory)\trufflehog.json'
-  #      ArtifactName: 'TruffleHog-Report'
+          --json > "$(System.DefaultWorkingDirectory)\trufflehog.json"
   - task: PublishBuildArtifacts@1
-    displayName: Publish TruffleHog SARIF
+    displayName: Publish TruffleHog Report
     condition: always()
     inputs:
-      PathtoPublish: '$(System.DefaultWorkingDirectory)\trufflehog.sarif'
-      ArtifactName: 'trufflehog-sarif'
+       PathtoPublish: '$(System.DefaultWorkingDirectory)\trufflehog.json'
+       ArtifactName: 'TruffleHog-Report'
 
  # =========================
  # TFLint Install & Scan
