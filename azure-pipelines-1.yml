@@ -98,44 +98,33 @@ jobs:
  # TFLint Install & Scan
 # =========================
   - task: PowerShell@2
-    displayName: Tflint
     inputs:
       targetType: 'inline'
       script: |
-        $ErrorActionPreference = "Stop"
-        
-        $url = "https://github.com/terraform-linters/tflint/releases/download/v0.59.1/tflint_windows_amd64.zip"
+        # Define the URL and paths for TFLint download
+        $url = "https://github.com/terraform-linters/tflint/releases/download/v0.54.0/tflint_windows_amd64.zip"
         $zipPath = "$(System.DefaultWorkingDirectory)\tflint.zip"
         $extractPath = "$(System.DefaultWorkingDirectory)\tflint"
-        $tflintExe = "$extractPath\tflint.exe"
-        
-        Write-Host "Downloading Tflint..."
+                    
+        # Step 1: Download TFLint
+        Write-Host "Downloading TFLint..."
         Invoke-WebRequest -Uri $url -OutFile $zipPath
-        
-        Write-Host "Extracting TFlint..."
+                    
+        # Step 2: Extract the downloaded ZIP file
+        Write-Host "Extracting TFLint..."
         Expand-Archive -Path $zipPath -DestinationPath $extractPath -Force
-        
-        
-        Write-Host "Verify tflint..."
-        & $tflintExe --version
-        
-        Write-Host "Running tflint..."
-        & $tflintExe --init 
-        Write-Host "Initialize tflint..."
-        & $tflintExe --init
+                    
+        # Step 3: Add TFLint directory to the environment PATH variable
+        Write-Host "Adding TFLint to PATH..."
+        $env:Path += ";$extractPath"
+        setx PATH "$env:Path" /M  # This sets the PATH for all future tasks
+                    
+        # Step 4: Verify the TFLint installation
+        Write-Host "Verifying TFLint installation..."
+        tflint --version
 
-        Write-Host "Running tflint with JSON output..."
-        & $tflintExe `
-        --format json `
-        --recursive `
-        > "$(System.DefaultWorkingDirectory)\tflint.json"
-  - task: PublishBuildArtifacts@1
-    displayName: Publish Tflint Report
-    condition: always()
-    inputs:
-       PathtoPublish: '$(System.DefaultWorkingDirectory)\tflint.json'
-       ArtifactName: 'tflint-Report'
-   #========================
+
+  #========================
   # CHeckov
   #========================
   - task: PowerShell@2
@@ -166,7 +155,19 @@ jobs:
 
         Write-Host "Verify checkov..."
         & $checkovexe --version
-
+  - task: CmdLine@2
+    inputs:
+        script: 
+         echo "Runnig tflint...."
+         $(System.DefaultWorkingDirectory)\tflint\tflint.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=junit > junit.xml
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+  - task: PublishTestResults@2
+    condition: always()
+    inputs:
+        testResultsFormat: 'JUnit'
+        testResultsFiles: '$(System.DefaultWorkingDirectory)/junit.xml'
+        mergeTestResults: true
+        testRunTitle: 'tflint'
 # =========================
 # Manual Approval Job
 # =========================
