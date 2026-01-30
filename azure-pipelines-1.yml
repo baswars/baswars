@@ -95,8 +95,6 @@ jobs:
        PathtoPublish: '$(System.DefaultWorkingDirectory)\trufflehog.json'
        ArtifactName: 'TruffleHog-Report'
 
-
-
 # =========================
 # Manual Approval Job
 # =========================
