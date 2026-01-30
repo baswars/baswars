@@ -166,7 +166,7 @@ jobs:
           Write-Host "Adding checkov to PATH..."
           $env:Path += ";$extractPath\dist"
         Write-Host "Verify checkov..."
-        & $checkovexe --version
+        & $checkov.exe --version
   
 # =========================
 # Manual Approval Job
