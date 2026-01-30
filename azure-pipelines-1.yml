@@ -171,15 +171,18 @@ jobs:
     inputs:
         script: 
          echo "Runnig checkov...."
-         $(System.DefaultWorkingDirectory)\checkov\checkov.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=json > checkov.json
+         $(System.DefaultWorkingDirectory)\checkov\checkov.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=junit > junit.xml
         workingDirectory: '$(System.DefaultWorkingDirectory)'
 
-  - task: PublishBuildArtifacts@1
-    displayName: Publish checkov JSON Report
+  - task: PublishTestResults@2
+    displayName: Publish TFLint Test Results
     condition: always()
     inputs:
-      PathtoPublish: '$(System.DefaultWorkingDirectory)\checkov.json'
-      ArtifactName: 'checkov-report'
+      testResultsFormat: 'JUnit'
+      testResultsFiles: '$(System.DefaultWorkingDirectory)/junit.xml'
+      mergeTestResults: true
+      testRunTitle: 'checkov'
+
 # =========================
 # Manual Approval Job
 # =========================
