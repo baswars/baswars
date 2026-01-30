@@ -164,9 +164,7 @@ jobs:
         
         # Step 3: Add TFLint directory to the environment PATH variable
           Write-Host "Adding TFLint to PATH..."
-          $env:Path += ";$extractPath"
-          setx PATH "$env:Path" /M  # This sets the PATH for all future tasks
-
+          $env:Path += ";$extractPath\dist"
         Write-Host "Verify checkov..."
         & $checkovexe --version
   
