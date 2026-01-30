@@ -87,8 +87,7 @@ jobs:
          Write-Host "Running TruffleHog..."
          & "$extractDir\trufflehog.exe" filesystem "$(System.DefaultWorkingDirectory)" `
           --only-verified `
-          --format sarif `
-          --output "$(System.DefaultWorkingDirectory)\trufflehog.sarif"
+          --json > "$(System.DefaultWorkingDirectory)\trufflehog.json"
 
 
 
