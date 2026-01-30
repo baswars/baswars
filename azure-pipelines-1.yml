@@ -64,52 +64,33 @@ jobs:
   # TFLint Install & Scan
   # =========================
   - task: PowerShell@2
-    displayName: Install & Run TFLint
+    displayName: Install & Run TruffleHog
     inputs:
       targetType: inline
       script: |
         $ErrorActionPreference = "Stop"
 
-        $url = "https://github.com/terraform-linters/tflint/releases/download/v0.54.0/tflint_windows_amd64.zip"
-        $zipPath = "$(System.DefaultWorkingDirectory)\tflint.zip"
-        $extractPath = "$(System.DefaultWorkingDirectory)\tflint"
-        $tflintExe = "$extractPath\tflint.exe"
+        $url = "https://github.com/trufflesecurity/trufflehog/releases/download/v3.74.0/trufflehog_3.74.0_windows_amd64.zip"
+        $zipPath = "$(System.DefaultWorkingDirectory)\trufflehog.zip"
+        $extractPath = "$(System.DefaultWorkingDirectory)\trufflehog"
+        $exePath = "$extractPath\trufflehog.exe"
 
-        Write-Host "Downloading TFLint..."
+        Write-Host "Downloading TruffleHog..."
         Invoke-WebRequest -Uri $url -OutFile $zipPath
 
-        Write-Host "Extracting TFLint..."
+        Write-Host "Extracting TruffleHog. .."
         Expand-Archive -Path $zipPath -DestinationPath $extractPath -Force
 
-        Write-Host "Verifying TFLint..."
-        & $tflintExe --version
+        Write-Host "Verifying TruffleHog..."
+        & $exePath --version
 
-        Write-Host "Running TFLint (console output)..."
-        & $tflintExe --init
-        & $tflintExe
+        Write-Host "Running TruffleHog scan..."
+        & $exePath filesystem "$(System.DefaultWorkingDirectory)" `
+          --only-verified `
+          --fail `
+          --format sarif `
+          --output "$(System.DefaultWorkingDirectory)\trufflehog.sarif"
 
-  # =========================
-  # TFLint JUnit Report
-  # =========================
-  - task: CmdLine@2
-    displayName: Run TFLint (JUnit Report)
-    inputs:
-      script: |
-        echo Running TFLint with JUnit output...
-        "$(System.DefaultWorkingDirectory)\tflint\tflint.exe" `
-          --chdir "$(System.DefaultWorkingDirectory)" `
-          --recursive `
-          --format junit > "$(System.DefaultWorkingDirectory)\junit.xml"
-      workingDirectory: '$(System.DefaultWorkingDirectory)'
-
-  - task: PublishTestResults@2
-    displayName: Publish TFLint Results
-    condition: always()
-    inputs:
-      testResultsFormat: JUnit
-      testResultsFiles: '$(System.DefaultWorkingDirectory)\junit.xml'
-      mergeTestResults: true
-      testRunTitle: TFLint Scan
 
 # =========================
 # Manual Approval Job
