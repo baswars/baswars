@@ -98,6 +98,7 @@ jobs:
  # TFLint Install & Scan
 # =========================
   - task: PowerShell@2
+    displayName: Tflint
     inputs:
       targetType: 'inline'
       script: |
@@ -115,12 +116,18 @@ jobs:
         Expand-Archive -Path $zipPath -DestinationPath $extractPath -Force
         
         
-        Write-Host "Verify TruffleHog..."
+        Write-Host "Verify tflint..."
         & $tflintExe --version
         
-        Write-Host "Running TruffleHog..."
+        Write-Host "Running tflint..."
         & $tflintExe --init 
         & $tflintExe
+  - task: PublishBuildArtifacts@1
+    displayName: Publish Tflint Report
+    condition: always()
+    inputs:
+       PathtoPublish: '$(System.DefaultWorkingDirectory)\tflint.json'
+       ArtifactName: 'tflint-Report'
 
 # =========================
 # Manual Approval Job
