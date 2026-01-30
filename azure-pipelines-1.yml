@@ -127,13 +127,13 @@ jobs:
     inputs:
         script: 
          echo "Runnig tflint...."
-         $(System.DefaultWorkingDirectory)\tflint\tflint.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=junit > junit.xml
+         $(System.DefaultWorkingDirectory)\tflint\tflint.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=json > tflint.json
         workingDirectory: '$(System.DefaultWorkingDirectory)'
   - task: PublishTestResults@2
     condition: always()
     inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '$(System.DefaultWorkingDirectory)/junit.xml'
+        testResultsFormat: 'json'
+        testResultsFiles: '$(System.DefaultWorkingDirectory)/tflint.json'
         mergeTestResults: true
         testRunTitle: 'tflint'
 
