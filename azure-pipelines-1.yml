@@ -162,8 +162,8 @@ jobs:
         Write-Host "Extracting checkov..."
         Expand-Archive -Path $zipPath -DestinationPath $extractPath -Force
         
-        # Step 3: Add TFLint directory to the environment PATH variable
-          Write-Host "Adding TFLint to PATH..."
+        # Step 3: Add checkov directory to the environment PATH variable
+          Write-Host "Adding checkov to PATH..."
           $env:Path += ";$extractPath\dist"
         Write-Host "Verify checkov..."
         & $checkovexe --version
