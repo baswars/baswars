@@ -51,18 +51,18 @@ jobs:
       command: plan
       environmentServiceNameAzureRM: infra-ashoksc
 
-  # =========================
-  # tfsec Scan
-  # =========================
+# =========================
+# tfsec Scan
+# =========================
   - task: tfsec@1
     displayName: tfsec Terraform Scan
     inputs:
       version: v1.26.0
       dir: $(System.DefaultWorkingDirectory)
 
-  # =========================
-  # TFLint Install & Scan
-  # =========================
+# =========================
+# TruffleHog Install & Scan
+# =========================
   - task: PowerShell@2
     displayName: Install & Run TruffleHog (Windows tar.gz)
     inputs:
@@ -94,6 +94,33 @@ jobs:
     inputs:
        PathtoPublish: '$(System.DefaultWorkingDirectory)\trufflehog.json'
        ArtifactName: 'TruffleHog-Report'
+ # =========================
+ # TFLint Install & Scan
+# =========================
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: |
+        $ErrorActionPreference = "Stop"
+        
+        $url = "https://github.com/terraform-linters/tflint/releases/download/v0.59.1/tflint_windows_amd64.zip"
+        $archive = "$(System.DefaultWorkingDirectory)\tflint.tar.gz"
+        $extractDir = "$(System.DefaultWorkingDirectory)\trufflehog"
+        
+        Write-Host "Downloading TruffleHog..."
+        Invoke-WebRequest -Uri $url -OutFile $archive
+        
+        Write-Host "Extracting tar.gz..."
+        New-Item -ItemType Directory -Force -Path $extractDir | Out-Null
+        tar -xzf $archive -C $extractDir
+        
+        Write-Host "Verify TruffleHog..."
+        & "$extractDir\trufflehog.exe" --version
+        
+        Write-Host "Running TruffleHog..."
+        & "$extractDir\trufflehog.exe" filesystem "$(System.DefaultWorkingDirectory)" `
+         --only-verified `
+         --json > "$(System.DefaultWorkingDirectory)\trufflehog.json"
 
 # =========================
 # Manual Approval Job
@@ -102,7 +129,7 @@ jobs:
   displayName: Manual Validation
   dependsOn: TerraformInitPlan
   pool: server
-  timeoutInMinutes: 10
+  timeoutInMinutes: 2
   steps:
   - task: ManualValidation@1
     inputs:
