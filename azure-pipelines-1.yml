@@ -141,6 +141,7 @@ jobs:
   # CHeckov
   #========================
   - task: PowerShell@2
+    displayName: InstallCheckOv
     inputs:
       targetType: 'inline'
       script: |
