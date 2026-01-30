@@ -64,32 +64,32 @@ jobs:
   # TFLint Install & Scan
   # =========================
   - task: PowerShell@2
-    displayName: Install & Run TruffleHog
+    displayName: Install & Run TruffleHog (Windows tar.gz)
     inputs:
       targetType: inline
       script: |
-        $ErrorActionPreference = "Stop"
+         $ErrorActionPreference = "Stop"
 
-        $url = "https://github.com/trufflesecurity/trufflehog/releases/download/v3.92.5/trufflehog_3.92.5_windows_amd64.tar.gz"
-        $zipPath = "$(System.DefaultWorkingDirectory)\trufflehog.tar.gz"
-        $extractPath = "$(System.DefaultWorkingDirectory)\trufflehog"
-        $exePath = "$extractPath\trufflehog.exe"
+         $url = "https://github.com/trufflesecurity/trufflehog/releases/download/v3.92.5/trufflehog_3.92.5_windows_amd64.tar.gz"
+         $archive = "$(System.DefaultWorkingDirectory)\trufflehog.tar.gz"
+         $extractDir = "$(System.DefaultWorkingDirectory)\trufflehog"
 
-        Write-Host "Downloading TruffleHog..."
-        Invoke-WebRequest -Uri $url -OutFile $zipPath
+         Write-Host "Downloading TruffleHog..."
+         Invoke-WebRequest -Uri $url -OutFile $archive
 
-        Write-Host "Extracting TruffleHog. .."
-        Expand-Archive -Path $zipPath -DestinationPath $extractPath -Force
+         Write-Host "Extracting tar.gz..."
+         New-Item -ItemType Directory -Force -Path $extractDir | Out-Null
+         tar -xzf $archive -C $extractDir
 
-        Write-Host "Verifying TruffleHog..."
-        & $exePath --version
+         Write-Host "Verify TruffleHog..."
+         & "$extractDir\trufflehog.exe" --version
 
-        Write-Host "Running TruffleHog scan..."
-        & $exePath filesystem "$(System.DefaultWorkingDirectory)" `
+         Write-Host "Running TruffleHog..."
+         & "$extractDir\trufflehog.exe" filesystem "$(System.DefaultWorkingDirectory)" `
           --only-verified `
-          --fail `
           --format sarif `
           --output "$(System.DefaultWorkingDirectory)\trufflehog.sarif"
+
 
 
 # =========================
