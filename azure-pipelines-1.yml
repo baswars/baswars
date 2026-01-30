@@ -147,7 +147,7 @@ jobs:
         $url = "https://github.com/bridgecrewio/checkov/releases/download/3.2.499/checkov_windows_X86_64.zip"
         $zipPath = "$(System.DefaultWorkingDirectory)\chekov.zip"
         $extractPath = "$(System.DefaultWorkingDirectory)\checkov"
-        $checkovexe = "$extractPath\checckov.exe"
+        $checkovexe = "$extractPath\checkov.exe"
         
         Write-Host "Downloading checkov..."
         Invoke-WebRequest -Uri $url -OutFile $zipPath
