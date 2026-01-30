@@ -173,6 +173,13 @@ jobs:
          echo "Runnig checkov...."
          $(System.DefaultWorkingDirectory)\checkov\checkov.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=json > checkov.json
         workingDirectory: '$(System.DefaultWorkingDirectory)'
+
+  - task: PublishBuildArtifacts@1
+    displayName: Publish checkov JSON Report
+    condition: always()
+    inputs:
+      PathtoPublish: '$(System.DefaultWorkingDirectory)\checkov.json'
+      ArtifactName: 'checkov-report'
 # =========================
 # Manual Approval Job
 # =========================
