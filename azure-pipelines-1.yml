@@ -135,6 +135,29 @@ jobs:
     inputs:
        PathtoPublish: '$(System.DefaultWorkingDirectory)\tflint.json'
        ArtifactName: 'tflint-Report'
+   #========================
+  # CHeckov
+  #========================
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: |
+        $ErrorActionPreference = "Stop"
+        
+        $url = "https://github.com/bridgecrewio/checkov/releases/download/3.2.499/checkov_windows_X86_64.zip"
+        $zipPath = "$(System.DefaultWorkingDirectory)\chekov.zip"
+        $extractPath = "$(System.DefaultWorkingDirectory)\checkov"
+        $checkovexe = "$extractPath\checckov.exe"
+        
+        Write-Host "Downloading checkov..."
+        Invoke-WebRequest -Uri $url -OutFile $zipPath
+        
+        Write-Host "Extracting checkov..."
+        Expand-Archive -Path $zipPath -DestinationPath $extractPath -Force
+        
+        
+        Write-Host "Verify checkov..."
+        & $checkovexe --version
 
 # =========================
 # Manual Approval Job
