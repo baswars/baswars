@@ -4,7 +4,7 @@ trigger:
   branches:
     include:
       - main
-      - master
+      # - master
     exclude:
       - feature*
   batch: true
@@ -86,16 +86,15 @@ jobs:
 
          Write-Host "Running TruffleHog..."
          & "$extractDir\trufflehog.exe" filesystem "$(System.DefaultWorkingDirectory)" `
-          --only-verified `
-          --sarif  > "$(System.DefaultWorkingDirectory)\trufflehog.sarif"
-  - task: PublishTestResults@2
-    displayName: Publish TruffleHog Results
+          --only-verified 
+          --sarif 
+          --output trufflehog.sarif
+  - task: PublishBuildArtifacts@1
+    displayName: Publish TruffleHog SARIF
     condition: always()
     inputs:
-     testResultsFormat: JUnit
-     testResultsFiles: trufflehog.xml
-     testRunTitle: TruffleHog Secret Scan
-
+      PathtoPublish: trufflehog.sarif
+      ArtifactName: trufflehog-sarif
 
  # =========================
  # TFLint Install & Scan
