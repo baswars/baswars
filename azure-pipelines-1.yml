@@ -88,11 +88,11 @@ jobs:
          & "$extractDir\trufflehog.exe" filesystem "$(System.DefaultWorkingDirectory)" 
           --only-verified
           --json > "$(System.DefaultWorkingDirectory)\trufflehog.json"
-  - task: PublishTestResults@2
+  - task: PublishBuildArtifacts@1
     inputs:
-      testResultsFormat: 'JUnit'
-      testResultsFiles: 'trufflehog.xml'
-      testRunTitle: 'trufflehog IaC  Scan'
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'trufflehog.json'
+      publishLocation: 'Container'
 
  # =========================
  # TFLint Install & Scan
