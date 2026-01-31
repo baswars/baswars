@@ -92,8 +92,7 @@ jobs:
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
       ArtifactName: 'trufflehog.json'
-      publishLocation: 'Container'
-
+      
  # =========================
  # TFLint Install & Scan
 # =========================
