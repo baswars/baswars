@@ -165,12 +165,7 @@ jobs:
         
         # Step 3: Add checkov directory to the environment PATH variable
           $env:Path += ";$extractPath\dist"
-        # add checkov directory to system path for all future task
-         Write-Host "adding checkov to system Path..."
-         setx PATH "env:path" /M
-        # varify checkov is in path 
-         Write-Host "checkov install & added to path"
-         $env:Path += ";$extractPath\dist"
+          
   - task: CmdLine@2
     inputs:
         script: 
