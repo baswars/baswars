@@ -21,7 +21,9 @@ jobs:
 - job: TerraformInitPlan
   displayName: Terraform Init & Plan
   steps:
-
+  - task: CmdLine@2
+    inputs:
+      script: 'az account show'
   - task: TerraformInstaller@1
     displayName: Install Terraform
     inputs:
