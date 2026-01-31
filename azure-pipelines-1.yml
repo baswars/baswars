@@ -89,8 +89,10 @@ jobs:
           --only-verified
           --json > "$(System.DefaultWorkingDirectory)\trufflehog.json"
   - task: PublishBuildArtifacts@1
+    displayName: Publish TruffleHog Report
+    condition: always()
     inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)\trufflehog.json'
       ArtifactName: 'trufflehog.json'
       
  # =========================
