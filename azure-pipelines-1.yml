@@ -196,3 +196,28 @@ jobs:
       notifyUsers: sachin.baswar@outlook.com
       approvers: sachin.baswar@outlook.com
       instructions: Please review Terraform plan and approve
+
+- job: TerraformApply
+  dependsOn:  ManualValidate
+  steps:
+  - task: TerraformTask@5
+    displayName: TerraformInit
+    inputs:
+      provider: 'azurerm'
+      command: 'init'
+      backendAzureRmResourceGroupName: 'rg-dev'
+      backendAzureRmStorageAccountName: 'devstoragedevaccount'
+      backendAzureRmContainerName: 'terraformcotainer'
+      backendAzureRmKey: 'terraformb15.tfstate'
+  - task: TerraformTask@5
+    displayName: TerraformPlan
+    inputs:
+      provider: 'azurerm'
+      command: 'plan'
+      environmentServiceNameAzureRM: 'infra-ashoksc'
+  - task: TerraformTask@5
+    displayName: TerraformApply
+    inputs:
+      provider: 'azurerm'
+      command: 'apply'
+      environmentServiceNameAzureRM: 'infra-ashoksc'
