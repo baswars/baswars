@@ -92,8 +92,8 @@ jobs:
     displayName: Publish TruffleHog Report
     condition: always()
     inputs:
-      PathtoPublish: '$(Build.ArtifactStagingDirectory)\trufflehog.json'
-      ArtifactName: 'trufflehog.json'
+       PathtoPublish: '$(System.DefaultWorkingDirectory)\trufflehog.json'
+       ArtifactName: 'TruffleHog-Report'
       
  # =========================
  # TFLint Install & Scan
