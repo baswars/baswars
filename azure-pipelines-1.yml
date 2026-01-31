@@ -85,8 +85,8 @@ jobs:
          & "$extractDir\trufflehog.exe" --version
 
          Write-Host "Running TruffleHog..."
-         & "$extractDir\trufflehog.exe" filesystem "$(System.DefaultWorkingDirectory)" 
-          --only-verified
+         & "$extractDir\trufflehog.exe" filesystem "$(System.DefaultWorkingDirectory)" `
+          --only-verified `
           --json > "$(System.DefaultWorkingDirectory)\trufflehog.json"
   - task: PublishBuildArtifacts@1
     displayName: Publish TruffleHog Report
