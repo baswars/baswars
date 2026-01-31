@@ -4,7 +4,7 @@ trigger:
   branches:
     include:
       - main
-      # - master
+      - master
     exclude:
       - feature*
   batch: true
@@ -87,25 +87,12 @@ jobs:
          Write-Host "Running TruffleHog..."
          & "$extractDir\trufflehog.exe" filesystem "$(System.DefaultWorkingDirectory)" `
           --only-verified `
-          --sarif `
-          --output trufflehog.sarif
-
-  - task: PowerShell@2
-    displayName: Run TruffleHog
+          --junitxml > "$(System.DefaultWorkingDirectory)\trufflehog.xml"
+  - task: PublishTestResults@2
     inputs:
-      targetType: inline
-      workingDirectory: $(System.DefaultWorkingDirectory)
-      script: |
-        Write-Host "Running TruffleHog..."
-        &"$extractDir\trufflehog.exe" filesystem . --only-verified --sarif --output trufflehog.sarif
-
-  - task: PublishBuildArtifacts@1
-    displayName: Publish TruffleHog SARIF
-    condition: always()
-    inputs:
-      PathtoPublish: trufflehog.sarif
-      ArtifactName: trufflehog-sarif
-
+      testResultsFormat: 'JUnit'
+      testResultsFiles: 'trufflehog.xml'
+      testRunTitle: 'trufflehog IaC  Scan'
 
  # =========================
  # TFLint Install & Scan
