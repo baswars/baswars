@@ -161,19 +161,21 @@ jobs:
         Invoke-WebRequest -Uri $url -OutFile $zipPath
         
         Write-Host "Extracting checkov..."
-        Expand-Archive -Path $zipPath -DestinationPath $extractPath -Force
+        Expand-Archive -Path $zipPath -DestinationPath $extractPath 
         
         # Step 3: Add checkov directory to the environment PATH variable
-          Write-Host "Adding checkov to PATH..."
           $env:Path += ";$extractPath\dist"
-         Write-Host "Verify checkov..."
-         checkov --version
-  # - task: CmdLine@2
-  #   inputs:
-  #       script: 
-  #        echo "Runnig checkov...."
-  #        $(System.DefaultWorkingDirectory)\checkov\checkov.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=sarif > checkov.sarif
-  #       workingDirectory: '$(System.DefaultWorkingDirectory)'
+        # add checkov directory to system path for all future task
+         Write-Host "adding checkov to system Path..."
+         setx PATH "env:path" /M
+        # varify checkov is in path 
+         Write-Host "checkov install & added to path"
+         $env:Path += ";$extractPath\dist"
+  - task: CmdLine@2
+    inputs:
+        script: 
+         echo "Runnig checkov...."
+         "$(System.DefaultWorkingDirectory)\checkov\dist\checkov.exe" -d "$(System.DefaultWorkingDirectory)" -o junitxml > "$(System.DefaultWorkingDirectory)\checkov\checkovresult.xml"
 
   # - task: PublishTestResults@2
   #   displayName: Publish checkov Test Results
