@@ -87,7 +87,7 @@ jobs:
          Write-Host "Running TruffleHog..."
          & "$extractDir\trufflehog.exe" filesystem "$(System.DefaultWorkingDirectory)" `
           --only-verified `
-          --junitxml > "$(System.DefaultWorkingDirectory)\trufflehog.xml"
+          --sarif  > "$(System.DefaultWorkingDirectory)\trufflehog.sarif"
   - task: PublishTestResults@2
     displayName: Publish TruffleHog Results
     condition: always()
