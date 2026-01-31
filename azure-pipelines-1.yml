@@ -172,7 +172,7 @@ jobs:
   #   inputs:
   #       script: 
   #        echo "Runnig checkov...."
-  #        $(System.DefaultWorkingDirectory)\checkov\checkov.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=json > json.xml
+  #        $(System.DefaultWorkingDirectory)\checkov\checkov.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=sarif > checkov.sarif
   #       workingDirectory: '$(System.DefaultWorkingDirectory)'
 
   # - task: PublishTestResults@2
@@ -183,9 +183,11 @@ jobs:
   #     mergeTestResults: true
   #     testRunTitle: 'checkov'
   - task: PowerShell@2
+    condition: always()
     inputs:
-      targetType: 'inline'
-      script: 'checkov -d . -o sarif --output-file-path checkov.sarif'
+      testResultsFiles: '$(System.DefaultWorkingDirectory)/checkov.sarif'
+      mergeTestResults: true
+      testRunTitle: 'checkov'
   - task: PowerShell@2
     inputs:
       targetType: 'inline'
