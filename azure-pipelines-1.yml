@@ -200,6 +200,10 @@ jobs:
 - job: TerraformApply
   dependsOn:  ManualValidate
   steps:
+  - task: TerraformInstaller@1
+    displayName: Install Terraform
+    inputs:
+      terraformVersion: 'latest'
   - task: TerraformTask@5
     displayName: TerraformInit
     inputs:
