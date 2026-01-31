@@ -51,91 +51,90 @@ jobs:
       command: plan
       environmentServiceNameAzureRM: infra-ashoksc
 
-# # =========================
-# # tfsec Scan
-# # =========================
-#   - task: tfsec@1
-#     displayName: tfsec Terraform Scan
-#     inputs:
-#       version: v1.26.0
-#       dir: $(System.DefaultWorkingDirectory)
+# =========================
+# tfsec Scan
+# =========================
+  - task: tfsec@1
+    displayName: tfsec Terraform Scan
+    inputs:
+      version: v1.26.0
+      dir: $(System.DefaultWorkingDirectory)
 
-# # =========================
-# # TruffleHog Install & Scan
-# # =========================
-#   - task: PowerShell@2
-#     displayName: Install & Run TruffleHog (Windows tar.gz)
-#     inputs:
-#       targetType: inline
-#       script: |
-#          $ErrorActionPreference = "Stop"
+# =========================
+# TruffleHog Install & Scan
+# =========================
+  - task: PowerShell@2
+    displayName: Install & Run TruffleHog (Windows tar.gz)
+    inputs:
+      targetType: inline
+      script: |
+         $ErrorActionPreference = "Stop"
 
-#          $url = "https://github.com/trufflesecurity/trufflehog/releases/download/v3.92.5/trufflehog_3.92.5_windows_amd64.tar.gz"
-#          $archive = "$(System.DefaultWorkingDirectory)\trufflehog.tar.gz"
-#          $extractDir = "$(System.DefaultWorkingDirectory)\trufflehog"
+         $url = "https://github.com/trufflesecurity/trufflehog/releases/download/v3.92.5/trufflehog_3.92.5_windows_amd64.tar.gz"
+         $archive = "$(System.DefaultWorkingDirectory)\trufflehog.tar.gz"
+         $extractDir = "$(System.DefaultWorkingDirectory)\trufflehog"
 
-#          Write-Host "Downloading TruffleHog..."
-#          Invoke-WebRequest -Uri $url -OutFile $archive
+         Write-Host "Downloading TruffleHog..."
+         Invoke-WebRequest -Uri $url -OutFile $archive
 
-#          Write-Host "Extracting tar.gz..."
-#          New-Item -ItemType Directory -Force -Path $extractDir | Out-Null
-#          tar -xzf $archive -C $extractDir
+         Write-Host "Extracting tar.gz..."
+         New-Item -ItemType Directory -Force -Path $extractDir | Out-Null
+         tar -xzf $archive -C $extractDir
 
-#          Write-Host "Verify TruffleHog..."
-#          & "$extractDir\trufflehog.exe" --version
+         Write-Host "Verify TruffleHog..."
+         & "$extractDir\trufflehog.exe" --version
 
-#          Write-Host "Running TruffleHog..."
-#          & "$extractDir\trufflehog.exe" filesystem "$(System.DefaultWorkingDirectory)" `
-#           --only-verified `
-#           --json > "$(System.DefaultWorkingDirectory)\trufflehog.json"
-#   - task: PublishBuildArtifacts@1
-#     displayName: Publish TruffleHog Report
-#     condition: always()
-#     inputs:
-#        PathtoPublish: '$(System.DefaultWorkingDirectory)\trufflehog.json'
-#        ArtifactName: 'TruffleHog-Report'
+         Write-Host "Running TruffleHog..."
+         & "$extractDir\trufflehog.exe" filesystem "$(System.DefaultWorkingDirectory)" `
+          --only-verified `
+          --junitxml > "$(System.DefaultWorkingDirectory)\trufflehog.xml"
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: 'trufflehog.xml'
+      testRunTitle: 'trufflehog IaC  Scan'
 
-#  # =========================
-#  # TFLint Install & Scan
-# # =========================
-#   - task: PowerShell@2
-#     displayName: TflintInstall
-#     inputs:
-#       targetType: 'inline'
-#       script: |
-#         # Define the URL and paths for TFLint download
-#         $url = "https://github.com/terraform-linters/tflint/releases/download/v0.54.0/tflint_windows_amd64.zip"
-#         $zipPath = "$(System.DefaultWorkingDirectory)\tflint.zip"
-#         $extractPath = "$(System.DefaultWorkingDirectory)\tflint"
+ # =========================
+ # TFLint Install & Scan
+# =========================
+  - task: PowerShell@2
+    displayName: TflintInstall
+    inputs:
+      targetType: 'inline'
+      script: |
+        # Define the URL and paths for TFLint download
+        $url = "https://github.com/terraform-linters/tflint/releases/download/v0.54.0/tflint_windows_amd64.zip"
+        $zipPath = "$(System.DefaultWorkingDirectory)\tflint.zip"
+        $extractPath = "$(System.DefaultWorkingDirectory)\tflint"
                     
-#         # Step 1: Download TFLint
-#         Write-Host "Downloading TFLint..."
-#         Invoke-WebRequest -Uri $url -OutFile $zipPath
+        # Step 1: Download TFLint
+        Write-Host "Downloading TFLint..."
+        Invoke-WebRequest -Uri $url -OutFile $zipPath
                     
-#         # Step 2: Extract the downloaded ZIP file
-#         Write-Host "Extracting TFLint..."
-#         Expand-Archive -Path $zipPath -DestinationPath $extractPath -Force
+        # Step 2: Extract the downloaded ZIP file
+        Write-Host "Extracting TFLint..."
+        Expand-Archive -Path $zipPath -DestinationPath $extractPath -Force
                     
-#         # Step 3: Add TFLint directory to the environment PATH variable
-#         Write-Host "Adding TFLint to PATH..."
-#         $env:Path += ";$extractPath"
-#         setx PATH "$env:Path" /M  # This sets the PATH for all future tasks
+        # Step 3: Add TFLint directory to the environment PATH variable
+        Write-Host "Adding TFLint to PATH..."
+        $env:Path += ";$extractPath"
+        setx PATH "$env:Path" /M  # This sets the PATH for all future tasks
                     
-#         # Step 4: Verify the TFLint installation
-#         Write-Host "Verifying TFLint installation..."
-#         tflint --version
-#   - task: CmdLine@2
-#     inputs:
-#         script: 
-#          echo "Runnig tflint...."
-#          $(System.DefaultWorkingDirectory)\tflint\tflint.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=json > tflint.json
-#         workingDirectory: '$(System.DefaultWorkingDirectory)'
-#   - task: PublishBuildArtifacts@1
-#     displayName: Publish TFLint JSON Report
-#     condition: always()
-#     inputs:
-#       PathtoPublish: '$(System.DefaultWorkingDirectory)\tflint.json'
-#       ArtifactName: 'tflint-report'
+        # Step 4: Verify the TFLint installation
+        Write-Host "Verifying TFLint installation..."
+        tflint --version
+  - task: CmdLine@2
+    inputs:
+        script: 
+         echo "Runnig tflint...."
+         $(System.DefaultWorkingDirectory)\tflint\tflint.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=json > tflint.json
+        workingDirectory: '$(System.DefaultWorkingDirectory)'
+  - task: PublishBuildArtifacts@1
+    displayName: Publish TFLint JSON Report
+    condition: always()
+    inputs:
+      PathtoPublish: '$(System.DefaultWorkingDirectory)\tflint.json'
+      ArtifactName: 'tflint-report'
 
 
   #========================
