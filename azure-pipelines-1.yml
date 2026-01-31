@@ -86,9 +86,10 @@ jobs:
 
          Write-Host "Running TruffleHog..."
          & "$extractDir\trufflehog.exe" filesystem "$(System.DefaultWorkingDirectory)" `
-          --only-verified 
-          --sarif 
+          --only-verified `
+          --sarif `
           --output trufflehog.sarif
+
   - task: PowerShell@2
     displayName: Run TruffleHog
     inputs:
