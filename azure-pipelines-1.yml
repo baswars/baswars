@@ -224,5 +224,5 @@ jobs:
     displayName: TerraformApply
     inputs:
       provider: 'azurerm'
-      command: 'apply'
+      command: 'destroy'
       environmentServiceNameAzureRM: 'infra-ashoksc'
