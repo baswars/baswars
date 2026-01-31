@@ -168,21 +168,33 @@ jobs:
           $env:Path += ";$extractPath\dist"
          Write-Host "Verify checkov..."
          checkov --version
-  - task: CmdLine@2
-    inputs:
-        script: 
-         echo "Runnig checkov...."
-         $(System.DefaultWorkingDirectory)\checkov\checkov.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=json > json.xml
-        workingDirectory: '$(System.DefaultWorkingDirectory)'
+  # - task: CmdLine@2
+  #   inputs:
+  #       script: 
+  #        echo "Runnig checkov...."
+  #        $(System.DefaultWorkingDirectory)\checkov\checkov.exe  --chdir="$(System.DefaultWorkingDirectory)" --recursive --format=json > json.xml
+  #       workingDirectory: '$(System.DefaultWorkingDirectory)'
 
-  - task: PublishTestResults@2
-    displayName: Publish checkov Test Results
-    condition: always()
+  # - task: PublishTestResults@2
+  #   displayName: Publish checkov Test Results
+  #   condition: always()
+  #   inputs:
+  #     testResultsFiles: '$(System.DefaultWorkingDirectory)/json.xml'
+  #     mergeTestResults: true
+  #     testRunTitle: 'checkov'
+  - task: PowerShell@2
     inputs:
-      testResultsFiles: '$(System.DefaultWorkingDirectory)/json.xml'
-      mergeTestResults: true
-      testRunTitle: 'checkov'
-
+      targetType: 'inline'
+      script: 'checkov -d . -o sarif --output-file-path checkov.sarif'
+  - task: PowerShell@2
+    inputs:
+      targetType: 'inline'
+      script: |
+        - task: PublishCodeAnalysisResults@2
+          displayName: "Publish Checkov SARIF Results"
+          inputs:
+            codeAnalysisTool: Sarif
+            summaryFileLocation: 'checkov.sarif'
 # =========================
 # Manual Approval Job
 # =========================
