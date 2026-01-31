@@ -85,9 +85,9 @@ jobs:
          & "$extractDir\trufflehog.exe" --version
 
          Write-Host "Running TruffleHog..."
-         & "$extractDir\trufflehog.exe" filesystem "$(System.DefaultWorkingDirectory)" `
-          --only-verified `
-          --junitxml > "$(System.DefaultWorkingDirectory)\trufflehog.xml"
+         & "$extractDir\trufflehog.exe" filesystem "$(System.DefaultWorkingDirectory)" 
+          --only-verified
+          --json > "$(System.DefaultWorkingDirectory)\trufflehog.json"
   - task: PublishTestResults@2
     inputs:
       testResultsFormat: 'JUnit'
