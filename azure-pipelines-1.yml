@@ -89,12 +89,22 @@ jobs:
           --only-verified 
           --sarif 
           --output trufflehog.sarif
+  - task: PowerShell@2
+    displayName: Run TruffleHog
+    inputs:
+      targetType: inline
+      workingDirectory: $(System.DefaultWorkingDirectory)
+      script: |
+        Write-Host "Running TruffleHog..."
+        &"$extractDir\trufflehog.exe" filesystem . --only-verified --sarif --output trufflehog.sarif
+
   - task: PublishBuildArtifacts@1
     displayName: Publish TruffleHog SARIF
     condition: always()
     inputs:
       PathtoPublish: trufflehog.sarif
       ArtifactName: trufflehog-sarif
+
 
  # =========================
  # TFLint Install & Scan
