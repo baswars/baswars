@@ -89,10 +89,13 @@ jobs:
           --only-verified `
           --junitxml > "$(System.DefaultWorkingDirectory)\trufflehog.xml"
   - task: PublishTestResults@2
+    displayName: Publish TruffleHog Results
+    condition: always()
     inputs:
-      testResultsFormat: 'JUnit'
-      testResultsFiles: 'trufflehog.xml'
-      testRunTitle: 'trufflehog IaC  Scan'
+     testResultsFormat: JUnit
+     testResultsFiles: trufflehog.xml
+     testRunTitle: TruffleHog Secret Scan
+
 
  # =========================
  # TFLint Install & Scan
