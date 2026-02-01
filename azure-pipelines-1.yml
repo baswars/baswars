@@ -229,7 +229,6 @@ stages:
       - task: TerraformTask@5
         displayName: Terraform Apply
         inputs:
-          provider: azurerm
-          command: apply
-          environmentServiceNameAzureRM: infra-ashoksc
-          args: -auto-approve
+          provider: 'azurerm'
+          command: 'destroy'
+          environmentServiceNameAzureRM: 'infra-ashoksc'
