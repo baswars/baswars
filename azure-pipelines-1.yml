@@ -9,6 +9,12 @@ trigger:
       - feature*
   batch: true
 
+variables: 
+  service_con: infra-ashoksc
+  rg_name: rg-dev
+  Storage_account: devstoragedevaccount
+  container: terraformcotainer
+
 pool:
   name: default
   demands:
@@ -30,10 +36,10 @@ stages:
         inputs:
           provider: 'azurerm'
           command: 'init'
-          backendServiceArm: 'infra-ashoksc'
-          backendAzureRmResourceGroupName: 'rg-dev'
-          backendAzureRmStorageAccountName: 'devstoragedevaccount'
-          backendAzureRmContainerName: 'terraformcotainer'
+          backendServiceArm: $(SerVice_con)
+          backendAzureRmResourceGroupName: $(rg_name)
+          backendAzureRmStorageAccountName: $(Storage_account)
+          backendAzureRmContainerName: $(container)
           backendAzureRmKey: 'terraformb15.tfstate'
 
       - task: TerraformTask@5
@@ -47,7 +53,7 @@ stages:
         inputs:
           provider: azurerm
           command: plan
-          environmentServiceNameAzureRM: infra-ashoksc
+          environmentServiceNameAzureRM: $(SerVice_con)
 
   - stage: IaCSecurityScanStage
     displayName: Infrastructure as Code Security Scans
@@ -214,10 +220,10 @@ stages:
         inputs:
           provider: 'azurerm'
           command: 'init'
-          backendServiceArm: 'infra-ashoksc'
-          backendAzureRmResourceGroupName: 'rg-dev'
-          backendAzureRmStorageAccountName: 'devstoragedevaccount'
-          backendAzureRmContainerName: 'terraformcotainer'
+          backendServiceArm: $(SerVice_con)
+          backendAzureRmResourceGroupName: $(rg_name)
+          backendAzureRmStorageAccountName: $(Storage_account)
+          backendAzureRmContainerName: $(container)
           backendAzureRmKey: 'terraformb15.tfstate'
       
       - task: TerraformTask@5
@@ -225,10 +231,10 @@ stages:
         inputs:
           provider: azurerm
           command: plan
-          environmentServiceNameAzureRM: infra-ashoksc
+          environmentServiceNameAzureRM: $(SerVice_con)
       - task: TerraformTask@5
         displayName: Terraform Apply
         inputs:
           provider: 'azurerm'
           command: 'destroy'
-          environmentServiceNameAzureRM: 'infra-ashoksc'
+          environmentServiceNameAzureRM: $(SerVice_con)
