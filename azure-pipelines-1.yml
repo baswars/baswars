@@ -49,12 +49,12 @@ stages:
           command: plan
           environmentServiceNameAzureRM: infra-ashoksc
 
-  - stage: IaCSecurityScan
+  - stage: IaCSecurityScanStage
     displayName: Infrastructure as Code Security Scans
     dependsOn: TerraformInitPlan 
     jobs:
-    - job: SecurityScan
-      displayName: IaC Security Scan
+    - job: tfsecscanJob
+      displayName: tfsecscan
       steps:
       - task: tfsec@1
         displayName: tfsec Terraform Scan
@@ -62,8 +62,9 @@ stages:
           version: v1.26.0
           dir: $(System.DefaultWorkingDirectory)
 
-    - job: TruffleHogScan
+    - job: TruffleHogScanJob
       displayName: TruffleHog Secret Scan
+      dependsOn: tfsecscanJob
       steps:
       - task: PowerShell@2
         displayName: Install & Run TruffleHog (Windows tar.gz)
@@ -97,8 +98,9 @@ stages:
           PathtoPublish: '$(System.DefaultWorkingDirectory)\trufflehog.json'
           ArtifactName: 'TruffleHog-Report'
     
-    - job: TflintScan
+    - job: TflintScanJob
       displayName: TFLint Scan
+      dependsOn: TruffleHogScanJob
       steps:
       - task: PowerShell@2
         displayName: TflintInstall
@@ -140,7 +142,8 @@ stages:
           PathtoPublish: '$(System.DefaultWorkingDirectory)\tflint.json'
           ArtifactName: 'tflint-report'
     
-    - job: CheckovScan
+    - job: CheckovScanJob
+      dependsOn: TflintScanJob
       displayName: Checkov IaC Security Scan
       steps:  
       - task: PowerShell@2
@@ -181,7 +184,7 @@ stages:
           testRunTitle: Checkov IaC Security Scan
   - stage: TerraformApply
     displayName: Terraform Apply stage
-    dependsOn: IaCSecurityScan
+    dependsOn: IaCSecurityScanStage
     jobs:
     - job: TerraformApply  
       displayName: Terraform Apply
