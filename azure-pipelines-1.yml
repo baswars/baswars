@@ -31,10 +31,10 @@ jobs:
     inputs:
       provider: 'azurerm'
       command: 'init'
-      backendServiceArm: 'Pay-As-You-Go (f581888a-e198-4db8-ac71-24910e81a209)'
-      backendAzureRmResourceGroupName: 'rg1'
-      backendAzureRmStorageAccountName: 'storageaccountsachininra'
-      backendAzureRmContainerName: 'infracontainer'
+      backendServiceArm: 'infra-ashoksc'
+      backendAzureRmResourceGroupName: 'rg-dev'
+      backendAzureRmStorageAccountName: 'devstoragedevaccount'
+      backendAzureRmContainerName: 'terraformcotainer'
       backendAzureRmKey: 'terraformb15.tfstate'
 
   - task: TerraformTask@5
