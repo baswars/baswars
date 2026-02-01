@@ -71,7 +71,7 @@ stages:
         inputs:
           targetType: inline
           script: |
-            ErrorActionPreference = "Stop"
+            $ErrorActionPreference = "Stop"
             $url = "https://github.com/trufflesecurity/trufflehog/releases/download/v3.92.5/trufflehog_3.92.5_windows_amd64.tar.gz"
             $archive = "$(System.DefaultWorkingDirectory)\trufflehog.tar.gz"
             $extractDir = "$(System.DefaultWorkingDirectory)\trufflehog"
