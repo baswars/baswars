@@ -182,9 +182,24 @@ stages:
           testResultsFormat: JUnit
           testResultsFiles: checkov\checkovresult.xml
           testRunTitle: Checkov IaC Security Scan
-  - stage: TerraformApply
-    displayName: Terraform Apply stage
+  - stage: ManualValidationStage
+    displayName: ManualValidation
     dependsOn: IaCSecurityScanStage
+    jobs: 
+    - job: ManualValidateJob
+      displayName: Manual Validation
+      pool: server
+      timeoutInMinutes: 2
+      steps:
+       - task: ManualValidation@1
+         inputs:
+          notifyUsers: sachin.baswar@outlook.com
+          approvers: sachin.baswar@outlook.com
+          instructions: Please review Terraform plan and approve
+
+  - stage: TerraformApply
+    displayName: TerraformApplystage
+    dependsOn: ManualValidationStage
     jobs:
     - job: TerraformApply  
       displayName: Terraform Apply
