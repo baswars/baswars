@@ -21,13 +21,6 @@ jobs:
 - job: TerraformInitPlan
   displayName: Terraform Init & Plan
   steps:
-  - task: AzureCLI@2
-    inputs:
-     azureSubscription: 'Pay-As-You-Go (f581888a-e198-4db8-ac71-24910e81a209)'
-     scriptType: 'ps'
-     scriptLocation: 'inlineScript'
-     inlineScript: 'az account show'
-
   - task: TerraformInstaller@1
     displayName: Install Terraform
     inputs:
